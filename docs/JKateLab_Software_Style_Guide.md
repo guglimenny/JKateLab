@@ -277,17 +277,16 @@ complexity without providing practical benefits.
 ## 3.1 Repository philosophy
 
 The JKateLab Python ecosystem is organized as a collection of
-independent Python libraries.
+independent Python libraries developed within a common ecosystem
+repository.
 
-Each library shall be developed and distributed as an independent
-repository. Consequently, every library shall have its own version,
-documentation, tests and release cycle.
-
-Dependencies between libraries shall follow the abstraction
+Libraries may depend on one another according to the abstraction
 hierarchy defined in Section 1.
 
-The JKateLab ecosystem itself shall only define the common software
-architecture and coding conventions adopted by all libraries.
+Each library shall maintain its own documentation, tests and
+internal structure. Libraries may eventually be distributed as
+independent repositories when their development and release cycles
+become sufficiently independent.
 
 ---
 
