@@ -2518,5 +2518,282 @@ alongside the development of the JKateLab testing utilities.
 location for module testing notebooks once the automated testing
 workflow has been implemented.
 
+======================================================================
+
+# 8. Version control and development workflow
+
+The JKateLab ecosystem shall use Git for version control and GitHub
+for remote repository hosting and collaboration.
+
+The development workflow is intentionally flexible. Developers should
+follow the general principles defined below and progressively refine
+their workflow through practical experience.
+
+## 8.1 General philosophy
+
+Version control shall be used to preserve the development history of
+the software and to provide stable points to which the project can
+return.
+
+The `main` branch shall represent a stable and usable state of the
+JKateLab ecosystem.
+
+Development that temporarily leaves the ecosystem broken,
+incomplete, under construction or dependent on temporary workarounds
+should be performed on a separate branch rather than directly on
+`main`.
+
+This ensures that the `main` branch remains suitable for obtaining a
+reasonably functional version of the ecosystem at any point in time.
+
+The workflow should remain sufficiently flexible to accommodate
+different types of development, including feature development, bug
+fixes, refactoring and performance optimisation.
+
+## 8.2 Branches
+
+Branches should be used whenever development temporarily diverges
+from the stable state represented by `main`.
+
+Typical branches may correspond to:
+
+* new features;
+* bug fixes;
+* refactoring;
+* performance optimisation;
+* experimental implementations.
+
+A branch may contain multiple commits representing successive stages
+of development.
+
+Once the corresponding work is complete and sufficiently tested, the
+changes may be integrated into `main`.
+
+The naming and organisation of branches should remain simple and
+descriptive.
+
+## 8.3 Commits
+
+A commit should represent one coherent and logically meaningful
+change.
+
+The appropriate unit of a commit is determined by the conceptual
+relationship between changes rather than by the number of modified
+files or lines of code.
+
+Unrelated changes should preferably be separated into different
+commits, while closely related changes should be grouped together.
+
+Commits should preferably leave the corresponding branch in a
+reasonably functional state. Intermediate development states may be
+committed when necessary, particularly during longer development
+processes, but incomplete or knowingly broken work should preferably
+remain on a development branch rather than on `main`.
+
+Commits should be made when a coherent unit of work has reached a
+meaningful development milestone rather than according to a fixed
+frequency or amount of code.
+
+## 8.4 Commit messages
+
+Commit messages shall clearly describe the change introduced by the
+commit.
+
+The first line should provide a concise summary of the change.
+Whenever additional context is useful, a longer message body may be
+provided below the summary.
+
+For example:
+
+```text
+Add periodic boundary conditions
+
+Implement periodic wrapping for particle positions using the
+minimum-image convention.
+```
+
+Commit messages should describe the resulting change rather than the
+development process used to produce it.
+
+For example, messages such as
+
+```text
+Add periodic boundary conditions
+Fix incorrect particle wrapping
+Refactor path construction
+```
+
+are preferred over generic messages such as
+
+```text
+Update code
+Work on simulation
+Various changes
+```
+
+Commit messages should remain concise while providing sufficient
+information to understand the purpose of the change.
+
+## 8.5 Development workflow
+
+The general development workflow should follow the following
+principles:
+
+1. Develop new or potentially disruptive functionality on a
+   dedicated branch when necessary.
+
+2. Test changes during development.
+
+3. Commit coherent and meaningful units of work.
+
+4. Keep the `main` branch stable and usable.
+
+5. Before integrating a branch into `main`, ensure that the changes
+   have been sufficiently tested.
+
+The exact sequence and frequency of these steps may vary depending on
+the nature and complexity of the development task.
+
+## 8.6 Development history
+
+Git history should be treated as a useful record of the evolution of
+the software.
+
+Commit history should remain sufficiently clear to allow developers
+to understand the major changes introduced over time.
+
+Development should not be artificially divided into excessively small
+commits solely for the purpose of creating a detailed history.
+Conversely, unrelated changes should not be combined into large
+commits merely to reduce the number of commits.
+
+The preferred balance is to preserve meaningful development milestones
+while keeping the history understandable.
+
+The development history may also document successive implementations
+of the same functionality, particularly when the software evolves
+through progressive optimisation or refactoring.
+
+For example:
+
+```text
+Implement brute-force neighbour search
+Add neighbour-search tests
+Implement cell-list optimisation
+Add performance comparison
+Fix periodic boundary handling
+```
+
+Such a history can provide useful context for understanding how the
+final implementation was developed and why particular design choices
+were adopted.
+
+======================================================================
+
+# 9. Project management
+
+The JKateLab ecosystem shall be managed using lightweight and
+pragmatic project-management practices appropriate to the scale and
+development stage of the project.
+
+Project-management practices should support development without
+introducing unnecessary administrative overhead.
+
+## 9.1 Planning and priorities
+
+Development should be guided by a general understanding of the current
+objectives and priorities of the project.
+
+Tasks and future developments may be planned informally through
+personal notes, TODO lists or other suitable means.
+
+Planning should remain flexible and may be adjusted as the project
+evolves and new requirements or priorities emerge.
+
+Formal planning procedures should only be introduced when the scale
+or complexity of the project makes them useful.
+
+## 9.2 TODOs and future work
+
+Incomplete functionality, planned improvements and ideas for future
+development should be recorded whenever they are likely to be useful
+beyond the immediate development context.
+
+TODO items should be sufficiently descriptive to make their intended
+purpose understandable.
+
+Temporary implementation notes and short-term development tasks may
+remain within the source code or development environment when they do
+not justify permanent documentation.
+
+As the project grows, TODO items and larger development tasks may be
+moved to a dedicated project-management system, such as GitHub Issues
+or a project board.
+
+## 9.3 Project decisions
+
+Important architectural and design decisions that are expected to
+remain relevant over time should be documented.
+
+Documentation of such decisions should focus on the reasoning behind
+the adopted solution, particularly when alternative approaches were
+considered and rejected.
+
+Minor implementation decisions do not require separate documentation
+when they can be adequately understood from the source code and
+existing documentation.
+
+## 9.4 General principles
+
+Project-management practices should remain proportional to the scale
+and maturity of the JKateLab ecosystem.
+
+The primary purpose of project management is to support effective
+software development rather than to impose a rigid development
+process.
+
+As the ecosystem grows, project-management practices may be expanded
+or formalised when this provides clear practical benefits.
+
+======================================================================
+
+# 10. Licensing
+
+All JKateLab software shall be distributed under an explicit open
+source license.
+
+Each library repository shall contain a `LICENSE` file specifying the
+license under which the corresponding software is distributed.
+
+The selected license shall be applied consistently to the source code
+and other software components of the corresponding library.
+
+Third-party software, dependencies and external resources shall remain
+subject to their respective licenses. Their use and redistribution
+shall comply with the applicable licensing conditions.
+
+The JKateLab ecosystem documentation should clearly identify any
+third-party resources whose licensing conditions are relevant to the
+use or redistribution of the software.
+
+======================================================================
+
+# 11. Final remarks
+
+The JKateLab ecosystem is intended to evolve incrementally through
+practical development and experience. The conventions defined in this
+guide provide a consistent foundation while remaining open to revision
+when demonstrated experience reveals better approaches.
+
+The primary objective is to develop software that is correct,
+maintainable and efficient, while avoiding unnecessary constraints and
+complexity. Conceptually:
+
+> Correctness > Performance > Readability
+
+The guidelines in this document should therefore be applied with
+sound judgement. Where a convention conflicts with correctness,
+performance or the practical development of the software, the
+underlying objectives of the ecosystem should take precedence.
 
 ======================================================================
