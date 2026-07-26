@@ -34,10 +34,13 @@
    - [5.1 General philosophy](#51-general-philosophy)
    - [5.2 Documentation hierarchy](#52-documentation-hierarchy)
    - [5.3 Library documentation](#53-library-documentation)
-   - [5.4 Module headers](#54-module-headers)
-   - [5.5 Functions](#55-functions)
-   - [5.6 Classes](#56-classes)
-   - [5.7 Examples](#57-examples)
+   - [5.4 Package documentation](#54-package-documentation)
+   - [5.5 Module documentation](#55-module-documentation)
+   - [5.6 Module headers](#56-module-headers)
+   - [5.7 Functions](#57-functions)
+   - [5.8 Classes](#58-classes)
+   - [5.9 Inline comments](#59-inline-comments)
+   - [5.10 Examples](#510-examples)
 6. [Implementation guidelines](#6-implementation-guidelines)
    - [6.1 General philosophy](#61-general-philosophy)
    - [6.2 Module organisation](#62-module-organisation)
@@ -840,6 +843,8 @@ Repository
     ↓
 Library guide
     ↓
+Module guide
+    ↓
 Module header
     ↓
 Class docstring
@@ -855,6 +860,7 @@ The purpose of each documentation level is summarised below.
 |-------|---------|
 | **Repository** | General presentation of the project, installation instructions and repository-specific information. |
 | **Library guide** | Objectives, architecture, public interface and design choices of the library. |
+| **Module guide** | Objectives, architecture, public interface and design choices of the module.<br>Additional details about unusual or unintuitive implementation choices. |
 | **Module header** | Purpose of the module, dependencies and overview of the provided software components. |
 | **Class docstring** | Description of the represented abstraction, its role and its main public interface. |
 | **Function docstring** | Description of the function purpose, interface, parameters and returned values. |
@@ -940,7 +946,47 @@ the JKateLab ecosystem.
 
 ---
 
-## 5.4 Module headers
+## 5.4 Package documentation
+
+Package documentation is not mandatory. Information concerning
+package organisation, structure and relationships between its modules
+shall generally be documented in the library guide.
+
+A dedicated package guide may be introduced when a package forms a
+sufficiently large or conceptually independent subsystem to justify
+additional documentation.
+
+Package documentation shall follow the same principles as other
+documentation levels and shall avoid duplicating information already
+provided by the library guide or module guides.
+
+---
+
+## 5.5 Module guides
+
+Module guides provide detailed documentation for individual modules
+whose purpose, design or usage cannot be adequately described through
+the module header and docstrings alone.
+
+A module guide should document, where relevant:
+- the objectives and purpose of the module;
+- its conceptual and architectural organisation;
+- its public interface and intended usage;
+- relevant design choices and implementation principles;
+- unusual or unintuitive implementation details;
+- representative usage examples.
+
+Module guides shall focus on the module as a whole and shall avoid
+duplicating detailed information already provided by class and function
+docstrings.
+
+Module guides are recommended for non-trivial modules with meaningful
+conceptual or usage complexity. Simple modules may be documented
+entirely through their module header and docstrings.
+
+---
+
+## 5.6 Module headers
 
 Each module shall begin with a standard header summarising its
 purpose, public interface and implementation context.
@@ -1020,7 +1066,7 @@ ecosystem.
 
 ---
 
-## 5.5 Functions
+## 5.7 Functions
 
 Functions implement a single well-defined operation. Every public
 function shall begin with a docstring describing its purpose,
@@ -1101,7 +1147,7 @@ clarity of the documentation.
 
 ---
 
-## 5.6 Classes
+## 5.8 Classes
 
 Every public class shall begin with a docstring describing the
 software abstraction represented by the class.
@@ -1142,7 +1188,7 @@ The following recommendations should be followed whenever possible.
 
 ---
 
-## 5.7 Inline comments
+## 5.9 Inline comments
 
 Inline comments are intended to improve code readability by
 explaining decisions that cannot be inferred directly from the
@@ -1169,8 +1215,8 @@ The following rules shall be respected.
 
 The following recommendations should be followed whenever possible.
 
-1. Inline comments should explain non-obvious implementation
-   choices, mathematical derivations or scientific conventions.
+1. Inline comments should explain non-obvious implementation choices,
+   mathematical derivations or scientific conventions.
 
 2. Performance-related implementation choices should be documented
    whenever they are not immediately evident from the code.
@@ -1196,7 +1242,7 @@ ecosystem.
 
 ---
 
-## 5.8 Examples
+## 5.10 Examples
 
 The JKateLab Python ecosystem shall be provided with suitable
 examples illustrating, contextualising and demonstrating the correct 
