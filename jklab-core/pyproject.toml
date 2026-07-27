@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "jklab-core"
+version = "0.1.0"
+description = "Core utilities for the JKateLab Python ecosystem."
+readme = "README.md"
+license = {file = "LICENSE"}
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
