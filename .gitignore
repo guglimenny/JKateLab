@@ -10,5 +10,8 @@ __pycache__/
 venv/
 env/
 
+# Python package build metadata
+**/*.egg-info/
+
 # macOS
 .DS_Store

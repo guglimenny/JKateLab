@@ -1,117 +1,184 @@
-# ==========================================================
-# exceptions.py
+# =============================================================================
+# jklab-core/exceptions.py
 #
-# Exception and error-handling utilities.
+# -----------------------------------------------------------------------------
+# DESCRIPTION
+# -----------------------------------------------------------------------------
+# Utilities for standardized error and warning handling across the JKateLab
+# ecosystem.
 #
-# This module provides helpers for raising formatted
-# exceptions with consistent diagnostic information.
+# The module provides:
+# - a base class for JKateLab-specific exceptions;
+# - a base class for JKateLab-specific warnings;
+# - utilities for formatting error and warning messages;
+# - a unified interface for raising errors and issuing warnings.
 #
-# Convention
-# ----------
-# Error messages follow the format:
+# -----------------------------------------------------------------------------
+# DEPENDENCIES
+# -----------------------------------------------------------------------------
+# - warnings : for native warning management.
 #
-#     [module.function]
+# -----------------------------------------------------------------------------
+# PUBLIC API
+# -----------------------------------------------------------------------------
+# Classes:
+# - JKateLabError   : Base class for JKateLab-specific exceptions.
+# - JKateLabWarning : Base class for JKateLab-specific warnings.
 #
-#     message
+# Functions:
+# - format_message : Compose and format error and warning messages.
+# - raise_error    : Raise an error with a custom message and context.
+# - raise_warning  : Issue a warning with a custom message and context.
 #
-#     variable_1 = value_1
-#     variable_2 = value_2
-#     ...
+# -----------------------------------------------------------------------------
+# IMPLEMENTATION NOTES
+# -----------------------------------------------------------------------------
+# - [format_message]: Uses "\n".join() to separate message lines.
+# - [raise_warning]: Uses stacklevel=2 to report the warning at the
+#   caller's location rather than inside this module.
 #
-#
-# ==========================================================
+# -----------------------------------------------------------------------------
+# MAINTAINER
+# -----------------------------------------------------------------------------
+# Guglielmo Mennella.
+# =============================================================================
 
-# ==========================================================
-# ERROR TYPES
-# ==========================================================
+# =============================================================================
+# Imports
+# =============================================================================
 
-_ERROR_DICT = {
-    "value"   : ValueError,
-    "type"    : TypeError,
-    "index"   : IndexError,
-    "key"     : KeyError,
-    "runtime" : RuntimeError,
-    "file"    : FileNotFoundError
-}
+import warnings
 
-# ==========================================================
-# ERROR UTILITIES
-# ==========================================================
+# =============================================================================
+# Classes
+# =============================================================================
 
-def raise_error(
-    error_type,
-    module_name,
-    function_name,
-    message,
-    **kwargs
-):
+class JKateLabError(Exception):
+    """Base class for JKateLab-specific exceptions."""
+    pass
+
+
+class JKateLabWarning(UserWarning):
+    """Base class for JKateLab-specific warnings."""
+    pass
+
+# =============================================================================
+# Functions
+# =============================================================================
+
+def format_message(
+    message: str,
+    context: dict = None,
+) -> str:
     """
-    Raise a formatted exception.
+    Format a message by composing a custom message with optional context data.
+    The context allows to pass any kind of variables relevant
+    to the error call.
 
     Parameters
     ----------
-    error_type : str
-        Error category.
-
-        Supported values:
-
-        - "value"
-        - "type"
-        - "index"
-        - "key"
-        - "runtime"
-
-    module_name : str
-        Module name.
-
-    function_name : str
-        Function name.
-
     message : str
-        Main error message.
+        User-provided custom message to describe the error in detail.
+    
+    context : dict or None, optional
+        Dictionary containing relevant quantities to include in the message.
+        Keys represent variable names and values represent their
+        corresponding values. Each entry is formatted as
+        'name = value'.
 
-    **kwargs
-        Additional variables printed for debugging.
-
-    Examples
-    --------
-    >>> raise_error(
-    ...     error_type="value",
-    ...     module_name="plotting",
-    ...     function_name="plot_imshow_grid",
-    ...     message=(
-    ...         "image_data_list and "
-    ...         "subplot_label_list must contain "
-    ...         "the same number of elements."
-    ...     ),
-    ...     nplots=8,
-    ...     nlabels=4
-    ... )
+    Returns
+    -------
+    str
+        Formatted message.
     """
 
-    if error_type not in _ERROR_DICT:
+    message_lines = [message]
 
-        raise ValueError(
-            "[exceptions.raise_error]\n"
-            "Unknow error type:\n"
-            f"error_type = '{error_type}'.\n"
-        )
+    if context:
 
-    text = (
-        f"[{module_name}.{function_name}]\n"
-        f"{message}:"
-    )
+        message_lines.append("")
+        message_lines.append("Context:")
 
-    if kwargs:
+        for name, value in context.items():
 
-        text += "\n"
-
-        for name, value in kwargs.items():
-
-            text += (
-                f"{name} = {value!r}\n"
+            message_lines.append(
+                f"{name} = {value!r}"
             )
 
-    raise _ERROR_DICT[error_type](text)
+    formatted_msg = "\n".join(message_lines)
 
-# ==========================================================
+    return formatted_msg
+
+
+def raise_error(
+    error: type[Exception],
+    message: str,
+    context: dict = None,
+) -> None:
+    """
+    Raise an error with a custom message and optional context.
+
+    Parameters
+    ----------
+    error : type[Exception]
+        Exception class to raise.
+
+    message : str
+        User-provided custom message to describe the error in detail.
+    
+    context : dict or None, optional
+        Dictionary containing relevant quantities to include in the error
+        message. Keys represent variable names and values represent their
+        corresponding values.
+
+    Returns
+    -------
+    None
+    """
+
+    err_msg = format_message(
+        message=message,
+        context=context
+    )
+
+    raise error(err_msg)
+
+
+def raise_warning(
+    warning: type[Warning],
+    message: str,
+    context: dict = None,
+) -> None:
+    """
+    Issue a warning with a custom message and optional context.
+
+    Parameters
+    ----------
+    warning : type[Warning]
+        Warning class to issue.
+
+    message : str
+        User-provided custom message to describe the warning in detail.
+    
+    context : dict or None, optional
+        Dictionary containing relevant quantities to include in the warning
+        message. Keys represent variable names and values represent their
+        corresponding values.
+
+    Returns
+    -------
+    None
+    """
+
+    warn_msg = format_message(
+        message=message,
+        context=context
+    )
+
+    warnings.warn(
+        category=warning,
+        message=warn_msg,
+        stacklevel=2
+    )
+
+# =============================================================================
