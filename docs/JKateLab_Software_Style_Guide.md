@@ -1,4 +1,3 @@
-======================================================================
 # JKateLab_Software_Style_Guide.md
 ----------------------------------
 
@@ -80,7 +79,7 @@
 10. [Licensing](#10-licensing)
 11. [Final remarks](#11-final-remarks)
 
-======================================================================
+----------------------------------------------------------------------
 
 # 1. Purpose
 
@@ -154,7 +153,7 @@ The main objectives of this guide are:
 - encourage modular, reusable and maintainable software design;
 - document the rationale behind important architectural decisions.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 2. Software architecture
 
@@ -297,7 +296,7 @@ possibly belonging to a lower abstraction layer.
 Premature generalisation should be avoided, as it often increases
 complexity without providing practical benefits.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 3. Repository organisation
 
@@ -383,7 +382,7 @@ Using a common repository structure across all libraries improves
 maintainability and allows developers to navigate different
 repositories using the same conventions.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 4. Naming conventions
 
@@ -762,7 +761,7 @@ Temporary files, notebooks and auxiliary scripts are not required to
 follow these conventions but should remain consistent within each
 project.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 5. Documentation standards
 
@@ -1278,7 +1277,7 @@ The following recommendations should be followed whenever possible.
 5. Examples should follow the naming conventions and programming
    practices defined throughout this guide.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 6. Implementation guidelines
 
@@ -2283,7 +2282,7 @@ and development efficiency. The purpose is not to eliminate the need
 for future refactoring, but to reduce unnecessary refactoring and
 ensure that reasonable future improvements remain possible.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 7. Testing guidelines
 
@@ -2590,7 +2589,7 @@ alongside the development of the JKateLab testing utilities.
 location for module testing notebooks once the automated testing
 workflow has been implemented.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 8. Version control and development workflow
 
@@ -2760,7 +2759,7 @@ Such a history can provide useful context for understanding how the
 final implementation was developed and why particular design choices
 were adopted.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 9. Project management
 
@@ -2827,7 +2826,7 @@ process.
 As the ecosystem grows, project-management practices may be expanded
 or formalised when this provides clear practical benefits.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 10. Licensing
 
@@ -2848,7 +2847,7 @@ The JKateLab ecosystem documentation should clearly identify any
 third-party resources whose licensing conditions are relevant to the
 use or redistribution of the software.
 
-======================================================================
+----------------------------------------------------------------------
 
 # 11. Final remarks
 
@@ -2868,4 +2867,4 @@ sound judgement. Where a convention conflicts with correctness,
 performance or the practical development of the software, the
 underlying objectives of the ecosystem should take precedence.
 
-======================================================================
+----------------------------------------------------------------------
