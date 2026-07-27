@@ -1,43 +1,99 @@
-# ==========================================================
-# io.py
+# =============================================================================
+# jklab-core/io.py
 #
-# Input-output (IO) utilities used by my_basic_lib.
+# -----------------------------------------------------------------------------
+# DESCRIPTION
+# -----------------------------------------------------------------------------
+# Utilities for standardized data input-output (IO).
 #
-# This module provides a centralized interface for loading
-# and saving data files. Functions defined here should be
-# generic and independent of any project-specific naming
-# conventions or data structures.
+# The module provides:
+# - a type alias for a path-like object;
+# - utilities for data loading;
+# - utilities for data saving;
 #
-# ==========================================================
+# -----------------------------------------------------------------------------
+# DEPENDENCIES
+# -----------------------------------------------------------------------------
+# - pathlib         : for the Path class.
+# - collections.abc : for the Sequence data type.
+# - numpy           : for the array class.
+#
+# - jklab.core.exceptions : for error handling.
+#
+# -----------------------------------------------------------------------------
+# PUBLIC API
+# -----------------------------------------------------------------------------
+# Type alias:
+# - PathLike : Union of str and Path.
+#
+# Functions:
+# - load_txt : Load numerical data from a text file.
+# - save_txt : Save numerical data to a text file.
+#
+# -----------------------------------------------------------------------------
+# IMPLEMENTATION NOTES
+# -----------------------------------------------------------------------------
+#
+# -----------------------------------------------------------------------------
+# MAINTAINER
+# -----------------------------------------------------------------------------
+# Guglielmo Mennella.
+# =============================================================================
 
+# =============================================================================
+# Imports
+# =============================================================================
+
+from pathlib import Path
+from collections.abc import Sequence
 import numpy as np
 
-# ==========================================================
-# TEXT FILES
+import jklab.core.exceptions as jkex
+
+# =============================================================================
+# Type alias
+# =============================================================================
+
+PathLike = str | Path
+
+# =============================================================================
+# Functions
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Loading functions
+# -----------------------------------------------------------------------------
 
 def load_txt(
-    path,
-    dtype=float,
-    skiprows=0,
-    skipdata=0,
-    usecols=None
+    path: PathLike,
+    dtype = float,
+    skiprows: int = 0,
+    usecols: int | Sequence[int] | None = None,
+    start: int | None = None,
+    stop: int | None = None,
 ) -> np.ndarray:
     """
     Load data from a text file.
 
     Parameters
     ----------
-    path : str or pathlib.Path
+    path : PathLike
         Path to the file.
 
-    dtype : data-type, optional
+    dtype : optional
         Desired data type of the returned array.
 
     skiprows : int, optional
         Number of lines to skip at the beginning of the file.
 
-    skipdata : int, optional
-        Number of lines to skip when returning the loaded data.
+    usecols : int or sequence of int, optional
+        Columns to read from the input file.
+
+    start : int, optional
+        Starting index of the returned data slice.
+
+    stop : int, optional
+        Stopping index of the returned data slice (exclusive).
 
     Returns
     -------
@@ -45,27 +101,55 @@ def load_txt(
         Loaded data array.
     """
 
-    return np.loadtxt(
+    loaded_data = np.loadtxt(
         fname=path,
         dtype=dtype,
         skiprows=skiprows,
         usecols=usecols
-    )[skipdata:]
+    )
+
+    return loaded_data[start:stop]
+
+# -----------------------------------------------------------------------------
+# Saving functions
+# -----------------------------------------------------------------------------
+
+def _format_may_lose_data(
+    data: np.ndarray,
+    dfmt: str,
+) -> bool:
+    """
+    Check whether the format may cause loss of numerical information.
+    """
+
+    is_float_data = np.issubdtype(
+        data.dtype,
+        np.floating
+    )
+
+    is_integer_format = (
+        "d" in dfmt
+    )
+
+    return (
+        is_float_data
+        and is_integer_format
+    )
 
 
 def save_txt(
-    path,
+    path: PathLike,
     data,
-    dfmt="%.18e",
-    header="",
-    columns=False
+    dfmt: str = "%.18e",
+    header: str = "",
+    transpose: bool = False,
 ) -> None:
     """
     Save data to a text file.
 
     Parameters
     ----------
-    path : str or pathlib.Path
+    path : PathLike
         Output file path.
 
     data : array-like
@@ -77,10 +161,8 @@ def save_txt(
     header : str, optional
         Header written at the beginning of the file.
 
-    columns : bool, optional
-        If True and data is two-dimensional, the first axis
-        is interpreted as columns and the array is transposed
-        before saving.
+    transpose : bool, optional
+        If True, the two-dimensional data array is transposed before saving.
 
         Example
         -------
@@ -92,7 +174,7 @@ def save_txt(
             x[1]  y[1]
             ...
             
-        when columns=True.
+        when transpose=True.
 
     Returns
     -------
@@ -101,11 +183,31 @@ def save_txt(
 
     data = np.asarray(data)
 
-    if (
-        columns
-        and data.ndim == 2
-    ):
-        data = data.T
+    if _format_may_lose_data(data, dfmt):
+
+        jkex.raise_warning(
+            warning=UserWarning,
+            message=(
+                "Integer formatting may cause loss of "
+                "numerical information."
+            ),
+            context={
+                "data.dtype": data.dtype,
+                "dfmt": dfmt,
+            }
+        )
+
+    if transpose:
+
+        if data.ndim == 2:
+            data = data.T
+
+        else:
+            jkex.raise_error(
+                error=ValueError,
+                message="transpose=True requires two-dimensional data.",
+                context={"data.ndim": data.ndim}
+            )
 
     np.savetxt(
         fname=path,
@@ -116,4 +218,4 @@ def save_txt(
 
     return None
 
-# ==========================================================
+# =============================================================================
