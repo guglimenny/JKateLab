@@ -7,25 +7,21 @@
 # Utilities for standardized data input-output (IO).
 #
 # The module provides:
-# - a type alias for a path-like object;
 # - utilities for data loading;
 # - utilities for data saving;
 #
 # -----------------------------------------------------------------------------
 # DEPENDENCIES
 # -----------------------------------------------------------------------------
-# - pathlib         : for the Path class.
 # - collections.abc : for the Sequence data type.
 # - numpy           : for the array class.
 #
 # - jklab.core.exceptions : for error handling.
+# - jklab.core.paths      : for the PathLike type.
 #
 # -----------------------------------------------------------------------------
 # PUBLIC API
 # -----------------------------------------------------------------------------
-# Type alias:
-# - PathLike : Union of str and Path.
-#
 # Functions:
 # - load_txt : Load numerical data from a text file.
 # - save_txt : Save numerical data to a text file.
@@ -44,22 +40,15 @@
 # Imports
 # =============================================================================
 
-from pathlib import Path
 from collections.abc import Sequence
 import numpy as np
 
 import jklab.core.exceptions as jkex
-
-# =============================================================================
-# Type alias
-# =============================================================================
-
-PathLike = str | Path
+from jklab.core.paths import PathLike
 
 # =============================================================================
 # Functions
 # =============================================================================
-
 # -----------------------------------------------------------------------------
 # Loading functions
 # -----------------------------------------------------------------------------
@@ -120,6 +109,19 @@ def _format_may_lose_data(
 ) -> bool:
     """
     Check whether the format may cause loss of numerical information.
+
+    Parameters
+    ----------
+    data: np.ndarray
+        Data to process.
+
+    dfmt: str
+        Format.
+
+    Returns
+    -------
+    bool
+        True if dfmt causes information loss; False otherwise.
     """
 
     is_float_data = np.issubdtype(

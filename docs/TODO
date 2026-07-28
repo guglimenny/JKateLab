@@ -1,5 +1,0 @@
-Unstructured list of future improvements or corrections
-
-// TODO:
-- core/exceptions.py: introduce a '\n' at begin of warning message.
-- dedicated test module in jklab-core.
