@@ -112,10 +112,10 @@ def _format_may_lose_data(
 
     Parameters
     ----------
-    data: np.ndarray
+    data : np.ndarray
         Data to process.
 
-    dfmt: str
+    dfmt : str
         Format.
 
     Returns
