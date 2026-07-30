@@ -6,3 +6,9 @@ TODO:
 
 MAYBE TODO:
 - [cancelled] core/exceptions.py: introduce a '\n' at begin of warning message.
+
+REVIEW:
+- [ ] .vscode rep structure when introducing dedicated venvs for multiple
+    packages. At the moment we'll leave one vscode folder at root level
+    with dedicated details for each package venv.
+    Then remove .vscode/ from .gitignore.
