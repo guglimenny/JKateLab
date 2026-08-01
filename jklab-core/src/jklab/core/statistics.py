@@ -1,78 +1,116 @@
-# ==========================================================
-# statistics.py
+# =============================================================================
+# jklab-core/statistics.py
 #
-# Basic statistical utilities.
+# -----------------------------------------------------------------------------
+# DESCRIPTION
+# -----------------------------------------------------------------------------
+# Utilities for computing statistics over multidimensional arrays with
+# optional masking.
 #
-# This module provides simple statistical functions that are
-# independent of any specific application or data format.
+# The module provides:
+# - a private helper for applying boolean masks to data;
+# - utilities for computing mean, variance, standard deviation, and standard
+#   error of the mean over selected axes.
 #
-# Condition convention
-# --------------------
-# Conditions always define VALID entries.
+# -----------------------------------------------------------------------------
+# DEPENDENCIES
+# -----------------------------------------------------------------------------
+# - numpy : for array conversion, masking, and NaN-aware statistical
+#   functions.
 #
-# Entries not satisfying the condition are ignored when
-# computing statistics.
+# -----------------------------------------------------------------------------
+# PUBLIC API
+# -----------------------------------------------------------------------------
+# Functions:
+# - compute_mean : Compute the mean of numerical data with optional axis
+#   selection and masking.
+# - compute_var  : Compute the variance of numerical data with optional axis
+#   selection, masking, and choice of degrees of freedom.
+# - compute_std  : Compute the standard deviation of numerical data with
+#   optional axis selection, masking, and choice of degrees of freedom.
+# - compute_sem  : Compute the standard error of the mean of numerical data
+#   with optional axis selection and masking.
 #
-# ==========================================================
+# -----------------------------------------------------------------------------
+# IMPLEMENTATION NOTES
+# -----------------------------------------------------------------------------
+# - _apply_mask() preserves the shape of the original data array by replacing
+#   entries that do not satisfy the mask with np.nan. Consequently:
+#   1. Integer array-like inputs are promoted to floating-point arrays when
+#      a mask is applied.
+#   2. Pre-existing NaN values are ignored by the NaN-aware statistical
+#      functions and should therefore be handled explicitly by the caller
+#      when their presence indicates invalid or unexpected data.
+#
+# - compute_var() and compute_std() allow the choice of delta degrees of
+#   freedom (ddof).
+#
+# - compute_sem() uses the unbiased sample standard deviation (ddof=1).
+#
+# -----------------------------------------------------------------------------
+# MAINTAINER
+# -----------------------------------------------------------------------------
+# Guglielmo Mennella.
+# =============================================================================
+
+# =============================================================================
+# Imports
+# =============================================================================
 
 import numpy as np
 
-# ==========================================================
-# INTERNAL UTILITIES
-# ==========================================================
+# =============================================================================
+# Functions
+# =============================================================================
 
-def _apply_condition(
+def _apply_mask(
     data,
-    condition=None
+    mask = None
 ) -> np.ndarray:
     """
-    Apply a validity condition to data.
+    Apply a boolean mask to data.
 
-    Entries not satisfying the condition are replaced
-    by NaN so that NumPy nan-aware statistics can ignore
-    them while preserving the array shape.
+    Entries corresponding to False mask values are replaced
+    by NaN, preserving the shape of the input array.
 
     Parameters
     ----------
     data : array-like
         Input data.
 
-    condition : callable, optional
-        Function returning a boolean mask.
+    mask : array-like of bool, optional
+        Boolean mask used to identify valid data entries.
 
     Returns
     -------
     numpy.ndarray
-        Conditioned array.
+        Array with masked entries replaced by NaN.
     """
 
-    data = np.asarray(
-        data,
-        dtype=float
-    )
+    data = np.asarray(data)
 
-    if condition is None:
+    if mask is None:
         return data
 
-    mask = condition(data)
-
-    return np.where(
+    filtered_data = np.where(
         mask,
         data,
         np.nan
     )
 
-# ==========================================================
-# STATISTICS
-# ==========================================================
+    return filtered_data
 
-def mean(
+
+def compute_mean(
     data,
-    axis=None,
-    condition=None
+    axis = None,
+    mask = None
 ) -> np.ndarray:
     """
     Compute mean.
+
+    The mask parameter optionally selects the data
+    entries included in the computation.
 
     Parameters
     ----------
@@ -82,8 +120,8 @@ def mean(
     axis : int, tuple, or None, optional
         Axis along which the statistic is computed.
 
-    condition : callable, optional
-        Valid-data condition.
+    mask : array-like of bool, optional
+        Valid-data mask.
 
     Returns
     -------
@@ -91,22 +129,24 @@ def mean(
         Mean values.
     """
 
-    data = _apply_condition(
+    data = _apply_mask(
         data,
-        condition=condition
+        mask=mask
     )
 
-    return np.nanmean(
+    mean_value = np.nanmean(
         data,
         axis=axis
     )
 
+    return mean_value
 
-def var(
+
+def compute_var(
     data,
-    axis=None,
-    condition=None,
-    ddof=0
+    axis = None,
+    mask = None,
+    ddof = 0
 ) -> np.ndarray:
     """
     Compute variance.
@@ -119,8 +159,8 @@ def var(
     axis : int, tuple, or None, optional
         Axis along which the statistic is computed.
 
-    condition : callable, optional
-        Valid-data condition.
+    mask : array-like of bool, optional
+        Valid-data mask.
 
     ddof : int, optional
         Delta degrees of freedom.
@@ -131,26 +171,33 @@ def var(
         Variance values.
     """
 
-    data = _apply_condition(
+    data = _apply_mask(
         data,
-        condition=condition
+        mask=mask
     )
 
-    return np.nanvar(
+    var_value = np.nanvar(
         data,
         axis=axis,
         ddof=ddof
     )
 
+    return var_value
 
-def std(
+
+def compute_std(
     data,
-    axis=None,
-    condition=None,
-    ddof=0
+    axis = None,
+    mask = None,
+    ddof = 0
 ) -> np.ndarray:
     """
     Compute standard deviation.
+
+    Notes
+    -----
+    If the number of valid observations is insufficient for the
+    specified ddof, the result is NaN and a RuntimeWarning is issued.
 
     Parameters
     ----------
@@ -160,8 +207,8 @@ def std(
     axis : int, tuple, or None, optional
         Axis along which the statistic is computed.
 
-    condition : callable, optional
-        Valid-data condition.
+    mask : array-like of bool, optional
+        Valid-data mask.
 
     ddof : int, optional
         Delta degrees of freedom.
@@ -172,30 +219,35 @@ def std(
         Standard-deviation values.
     """
 
-    data = _apply_condition(
+    data = _apply_mask(
         data,
-        condition=condition
+        mask=mask
     )
 
-    return np.nanstd(
+    std_value = np.nanstd(
         data,
         axis=axis,
         ddof=ddof
     )
 
+    return std_value
 
-def sem(
+
+def compute_sem(
     data,
-    axis=None,
-    condition=None
+    axis = None,
+    mask = None
 ) -> np.ndarray:
     """
     Compute standard error of the mean (SEM).
 
     Notes
     -----
-    Uses the unbiased sample standard deviation
-    (ddof=1).
+    Uses the unbiased sample standard deviation (ddof=1).
+
+    Only valid, non-NaN entries contribute to the calculation.
+    If fewer than two valid entries are available along a
+    reduction axis, the result is NaN.
 
     Parameters
     ----------
@@ -205,8 +257,8 @@ def sem(
     axis : int, tuple, or None, optional
         Axis along which the statistic is computed.
 
-    condition : callable, optional
-        Valid-data condition.
+    mask : array-like of bool, optional
+        Valid-data mask.
 
     Returns
     -------
@@ -214,9 +266,9 @@ def sem(
         SEM values.
     """
 
-    data = _apply_condition(
+    data = _apply_mask(
         data,
-        condition=condition
+        mask=mask
     )
 
     n_valid = np.sum(
@@ -230,8 +282,8 @@ def sem(
         ddof=1
     )
 
-    return std_val / np.sqrt(
-        n_valid
-    )
+    sem_value = std_val / np.sqrt(n_valid)
 
-# ==========================================================
+    return sem_value
+
+# =============================================================================

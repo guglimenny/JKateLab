@@ -14,7 +14,7 @@
 # -----------------------------------------------------------------------------
 # DEPENDENCIES
 # -----------------------------------------------------------------------------
-# - pathlib         : for the Path class.
+# - pathlib : for the Path class.
 #
 # - jklab.core.exceptions : for error handling.
 #
